@@ -1,0 +1,9 @@
+﻿{% extends "base.html" %}
+{% block title %}Bad Request{% endblock %}
+{% block content %}
+<section class="card">
+    <h2>400 - Bad Request</h2>
+    <p>Your request could not be processed. Please check the form data and try again.</p>
+    <a href="{{ url_for('main.index') }}">Go Home</a>
+</section>
+{% endblock %}

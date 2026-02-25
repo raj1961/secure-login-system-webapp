@@ -1,0 +1,85 @@
+﻿{% extends "base.html" %}
+{% block title %}Register | Secure Login RBAC{% endblock %}
+{% block content %}
+<section class="card">
+    <h2>Create Account</h2>
+    <form id="register-form" method="post" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" minlength="3" maxlength="30" value="{{ form_data.username }}" required>
+
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" value="{{ form_data.email }}" required>
+
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" minlength="12" required>
+        <small id="password-feedback" class="hint">Use 12+ chars with upper, lower, number, and special symbol.</small>
+
+        <label for="role">User Role</label>
+        <select id="role" name="role">
+            <option value="user" {% if form_data.role == 'user' %}selected{% endif %}>User</option>
+            <option value="member" {% if form_data.role == 'member' %}selected{% endif %}>Member</option>
+            <option value="admin" {% if form_data.role == 'admin' %}selected{% endif %}>Admin</option>
+        </select>
+        <small class="hint">Security rule: self-registration allows User/Member only. Admin is blocked.</small>
+
+        <button type="submit">Register</button>
+    </form>
+    <p class="hint">Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+</section>
+
+<script>
+(function () {
+    const form = document.getElementById('register-form');
+    const emailField = document.getElementById('email');
+    const passwordField = document.getElementById('password');
+    const passwordFeedback = document.getElementById('password-feedback');
+
+    function getPasswordIssues(password) {
+        const issues = [];
+        if (password.length < 12) issues.push('12+ characters');
+        if (!/[A-Z]/.test(password)) issues.push('an uppercase letter');
+        if (!/[a-z]/.test(password)) issues.push('a lowercase letter');
+        if (!/\d/.test(password)) issues.push('a number');
+        if (!/[^A-Za-z0-9]/.test(password)) issues.push('a special symbol');
+        return issues;
+    }
+
+    passwordField.addEventListener('input', function () {
+        const issues = getPasswordIssues(passwordField.value);
+        if (issues.length === 0) {
+            passwordFeedback.textContent = 'Strong password format.';
+            passwordFeedback.className = 'hint good';
+        } else {
+            passwordFeedback.textContent = 'Missing: ' + issues.join(', ');
+            passwordFeedback.className = 'hint bad';
+        }
+    });
+
+    form.addEventListener('submit', function (event) {
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailField.value);
+        const pwdIssues = getPasswordIssues(passwordField.value);
+
+        if (!emailOk || pwdIssues.length > 0) {
+            event.preventDefault();
+            if (!emailOk) {
+                emailField.setCustomValidity('Enter a valid email address.');
+            } else {
+                emailField.setCustomValidity('');
+            }
+            if (pwdIssues.length > 0) {
+                passwordField.setCustomValidity('Password policy not met.');
+            } else {
+                passwordField.setCustomValidity('');
+            }
+            form.reportValidity();
+            return;
+        }
+
+        emailField.setCustomValidity('');
+        passwordField.setCustomValidity('');
+    });
+})();
+</script>
+{% endblock %}

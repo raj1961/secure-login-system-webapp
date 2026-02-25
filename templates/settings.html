@@ -1,0 +1,58 @@
+﻿{% extends "base.html" %}
+{% block title %}Settings | Secure Login RBAC{% endblock %}
+{% block content %}
+<section class="card settings-card">
+    <div class="settings-head">
+        <h2>Settings</h2>
+        <a class="mini-link" href="{{ url_for('main.dashboard') }}">Back to Dashboard</a>
+    </div>
+
+    <div class="settings-section">
+        <h3>Theme</h3>
+        <p class="hint">Choose how the app should look on this browser.</p>
+        <div class="theme-toggle" role="group" aria-label="Theme Toggle">
+            <button type="button" class="theme-btn" data-theme-set="light">Light</button>
+            <button type="button" class="theme-btn" data-theme-set="dark">Dark</button>
+            <button type="button" class="theme-btn" data-theme-set="system">System</button>
+        </div>
+        <p class="hint" id="theme-status">Current theme: <span data-theme-status>system</span></p>
+    </div>
+
+    <div class="settings-section">
+        <h3>Change Password</h3>
+        <p class="hint">Enter your current password and set a new strong password.</p>
+
+        <form method="post" action="{{ url_for('main.change_password') }}" class="change-password-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label for="cp-current-password">Current Password</label>
+            <input id="cp-current-password" name="current_password" type="password" required>
+
+            <label for="cp-new-password">New Password</label>
+            <input id="cp-new-password" name="new_password" type="password" required>
+
+            <label for="cp-confirm-password">Confirm New Password</label>
+            <input id="cp-confirm-password" name="confirm_password" type="password" required>
+
+            <button type="submit">Change Password</button>
+        </form>
+    </div>
+
+    <div class="settings-section danger-zone">
+        <h3>Delete Account</h3>
+        <p class="hint">This action is irreversible. Type <strong>CONFIRM</strong> and enter your current password.</p>
+
+        <form method="post" action="{{ url_for('main.delete_account') }}" class="delete-account-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label for="current-password">Current Password</label>
+            <input id="current-password" name="current_password" type="password" required>
+
+            <label for="confirm-text">Type CONFIRM</label>
+            <input id="confirm-text" name="confirm_text" type="text" placeholder="CONFIRM" required>
+
+            <button type="submit" class="danger-btn">Delete My Account</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

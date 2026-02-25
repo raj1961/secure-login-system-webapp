@@ -1,0 +1,57 @@
+﻿{% extends "base.html" %}
+{% block title %}Admin | Secure Login RBAC{% endblock %}
+{% block content %}
+<section class="card wide">
+    <h2>Admin User Management</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Failed Attempts</th>
+                <th>Lockout Until</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td>{{ 'Active' if user.is_active else 'Disabled' }}</td>
+                <td>{{ user.failed_attempts }}</td>
+                <td>{{ user.lockout_until if user.lockout_until else '-' }}</td>
+                <td>
+                    <form class="inline-form" method="post" action="{{ url_for('admin.change_role', user_id=user.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <select name="role">
+                            <option value="user" {% if user.role == 'user' %}selected{% endif %}>User</option>
+                            <option value="member" {% if user.role == 'member' %}selected{% endif %}>Member</option>
+                            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                        </select>
+                        <button type="submit">Set Role</button>
+                    </form>
+                    {% if user.is_active %}
+                    <form class="inline-form" method="post" action="{{ url_for('admin.disable_user', user_id=user.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit">Disable</button>
+                    </form>
+                    {% endif %}
+                    {% if user.role != 'admin' %}
+                    <form class="inline-form" method="post" action="{{ url_for('admin.delete_user', user_id=user.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="danger-btn">Delete User</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

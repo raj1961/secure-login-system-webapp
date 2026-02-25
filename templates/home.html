@@ -1,0 +1,66 @@
+﻿{% extends "base.html" %}
+{% block title %}Home | Secure Login RBAC{% endblock %}
+{% block body_class %}home-page{% endblock %}
+{% block content %}
+<section class="hero-shell">
+    <div class="hero-copy">
+        <p class="hero-tag">Secure AI-Powered Cyber Workflow</p>
+        <h2>Secure at scale with humans + AI</h2>
+        <p class="hero-desc">Reduce risk continuously with secure authentication, role-based access, and team management built for modern cybersecurity workflows.</p>
+
+        <div class="hero-actions">
+            <a class="cta-primary" href="{{ url_for('auth.register') }}">Get Started</a>
+        </div>
+
+    </div>
+
+    <div class="hero-visual">
+        <article class="stat-card">
+            <h3>Security Overview</h3>
+            <p>Auth + RBAC + Account Lockout</p>
+            <strong>Production-Ready Demo</strong>
+        </article>
+
+        <article class="stat-card">
+            <h3>Team Operations</h3>
+            <p>Add, list, and remove team members securely from dashboard.</p>
+            <strong>Managed Access</strong>
+        </article>
+
+        <article class="stat-card">
+            <h3>Fast Start</h3>
+            <p>Already have account?</p>
+            <a href="{{ url_for('auth.login') }}">Sign in now</a>
+        </article>
+    </div>
+</section>
+<section class="contact-strip">
+    <div class="contact-card">
+        <div class="contact-content">
+            <div>
+                <h3>Contact Us</h3>
+                <p>For support, collaboration, or project queries, reach out directly.</p>
+                <a href="mailto:raj1961ansari@gmail.com">raj1961ansari@gmail.com</a>
+            </div>
+            <div class="social-icons" aria-label="Social Links">
+                <a
+                    href="https://www.linkedin.com/in/md-raja-ansari-b86768297?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="social-icon linkedin-icon"
+                    aria-label="LinkedIn"
+                    title="LinkedIn"
+                >in</a>
+                <a
+                    href="https://x.com/rajansa82605700?s=11"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="social-icon x-icon"
+                    aria-label="Twitter X"
+                    title="Twitter X"
+                >X</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

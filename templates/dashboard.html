@@ -1,0 +1,86 @@
+﻿{% extends "base.html" %}
+{% block title %}Dashboard | Secure Login RBAC{% endblock %}
+{% block content %}
+<section class="card dashboard-summary">
+    <div class="dashboard-head">
+        <a class="btn-link dashboard-settings-btn" href="{{ url_for('main.settings') }}">Open Settings</a>
+        <h2>User Dashboard</h2>
+    </div>
+    {% if user %}
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Role:</strong> {{ user.role }}</p>
+    <p><strong>Status:</strong> {{ 'Active' if user.is_active else 'Disabled' }}</p>
+    {% else %}
+    <p>User details unavailable.</p>
+    {% endif %}
+</section>
+
+<section class="card team-card">
+    <h3>Team Members</h3>
+    <p class="hint">Add, show, and delete team members from your dashboard.</p>
+
+    <form method="get" action="{{ url_for('main.dashboard') }}" class="team-search-form">
+        <label for="member-search">Search Team Members</label>
+        <div class="team-search-row">
+            <input id="member-search" type="text" name="q" value="{{ search_query }}" placeholder="Search by name, email, or role">
+            <button type="submit">Search</button>
+            {% if search_query %}
+            <a class="mini-link" href="{{ url_for('main.dashboard') }}">Clear</a>
+            {% endif %}
+        </div>
+    </form>
+
+    <form method="post" action="{{ url_for('main.add_team_member') }}" class="team-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <label for="member-name">Name</label>
+        <input id="member-name" type="text" name="name" maxlength="100" required>
+
+        <label for="member-email">Email</label>
+        <input id="member-email" type="email" name="email" maxlength="254" required>
+
+        <label for="member-role">Role</label>
+        <select id="member-role" name="role" required>
+            <option value="Member" selected>Member</option>
+            <option value="Admin">Admin</option>
+        </select>
+
+        <button type="submit">Add Team Member</button>
+    </form>
+
+    <div class="team-list-wrap">
+        {% if members %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Added On</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in members %}
+                <tr>
+                    <td>{{ member.name }}</td>
+                    <td>{{ member.email }}</td>
+                    <td>{{ member.role }}</td>
+                    <td>{{ member.created_at }}</td>
+                    <td>
+                        <form method="post" action="{{ url_for('main.delete_team_member', member_id=member.id) }}" class="inline-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="hint">No team members found.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

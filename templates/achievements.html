@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Achievements | Secure Login RBAC{% endblock %}
+{% block body_class %}achievements-page{% endblock %}
+{% block content %}
+<section class="card achievements-upload-card">
+    <div class="achievements-head">
+        <h2>Upload Proofs</h2>
+        <p class="hint">Select one category and upload your screenshot proof.</p>
+    </div>
+
+    <ol class="upload-option-list">
+        <li><strong>Bug Bounty Reward</strong></li>
+        <li><strong>Hall of Fame</strong></li>
+        <li><strong>Certificate</strong></li>
+    </ol>
+
+    {% if current_user %}
+    <form class="achievement-upload-form" method="post" action="{{ url_for('main.upload_achievement') }}" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <label for="title">Title</label>
+        <input id="title" name="title" type="text" maxlength="120" required placeholder="e.g., Shopify Bug Bounty Reward">
+
+        <fieldset class="upload-category-picker">
+            <legend>Category</legend>
+            {% for category in achievement_categories %}
+            <label class="upload-category-choice">
+                <input type="radio" name="category" value="{{ category }}" required>
+                <span>{{ loop.index }}. {{ category }}</span>
+            </label>
+            {% endfor %}
+        </fieldset>
+
+        <label for="description">Description (optional)</label>
+        <input id="description" name="description" type="text" maxlength="300" placeholder="Short note about this proof">
+
+        <label for="screenshot">Upload Screenshot</label>
+        <input id="screenshot" name="screenshot" type="file" accept=".png,.jpg,.jpeg,.webp" required>
+
+        <button type="submit">Upload</button>
+    </form>
+    {% else %}
+    <p class="hint">Please <a class="mini-link" href="{{ url_for('auth.login') }}">login</a> to upload screenshots.</p>
+    {% endif %}
+</section>
+
+<section class="card achievements-gallery-card">
+    <h3>Uploaded Proofs</h3>
+    {% if achievements %}
+    <div class="achievement-gallery">
+        {% for item in achievements %}
+        <article class="achievement-tile">
+            <div class="achievement-image-wrap">
+                <img src="{{ url_for('static', filename='uploads/achievements/' ~ item.image_filename) }}" alt="{{ item.title }}">
+            </div>
+            <div class="achievement-meta">
+                <strong>{{ item.title }}</strong>
+                <p class="hint"><span>{{ item.category }}</span> | <span>{{ item.owner.username }}</span> | <span>{{ item.created_at.strftime('%d %b %Y') }}</span></p>
+                {% if item.description %}
+                <p>{{ item.description }}</p>
+                {% endif %}
+                {% if current_user and (current_user.id == item.owner_id or current_user.role == 'admin') %}
+                <form method="post" action="{{ url_for('main.delete_achievement', achievement_id=item.id) }}" class="inline-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="achievement-delete-btn">Delete</button>
+                </form>
+                {% endif %}
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="hint">No uploads yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

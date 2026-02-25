@@ -1,0 +1,21 @@
+﻿{% extends "base.html" %}
+{% block title %}About Us | Secure Login RBAC{% endblock %}
+{% block content %}
+<section class="card about-card">
+    <h2>About Us</h2>
+    <p><strong>Website Developer:</strong> Raja Ansari</p>
+    <p>
+        This website is a secure authentication and user-management platform. It helps users register,
+        log in safely, manage role-based access, and handle team members from a protected dashboard.
+    </p>
+    <p>
+        Security-focused features include password hashing (Argon2), CAPTCHA verification on login,
+        account lockout after repeated failed attempts, CSRF protection, role-based access control,
+        and secure session handling.
+    </p>
+    <p class="hint">
+        Goal: provide a practical cybersecurity-ready web app where authentication, authorization,
+        and account protection work together in one system.
+    </p>
+</section>
+{% endblock %}

@@ -1,0 +1,8 @@
+﻿Flask>=3.0
+Flask-SQLAlchemy>=3.1
+Flask-Migrate>=4.0
+Flask-WTF>=1.2
+passlib[argon2]>=1.7.4
+requests>=2.32
+python-dotenv>=1.0
+pytest>=8.0

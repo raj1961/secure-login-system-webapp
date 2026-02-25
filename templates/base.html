@@ -1,0 +1,65 @@
+﻿<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Secure Login RBAC{% endblock %}</title>
+    <script>
+        (function () {
+            try {
+                var key = 'preferred-theme';
+                var saved = localStorage.getItem(key);
+                var useDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var theme = saved || (useDark ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (error) {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% if turnstile_enabled %}
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    {% endif %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <header class="site-header">
+        <h1>Secure Login System</h1>
+        <nav>
+            <a href="{{ url_for('main.index') }}">Home</a>
+            <a href="{{ url_for('main.about') }}">About Us</a>
+            {% if current_user %}
+            <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
+            {% if current_user.role == 'admin' %}
+            <a href="{{ url_for('admin.users') }}">Admin</a>
+            {% endif %}
+            <form class="inline-form" method="post" action="{{ url_for('auth.logout') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit">Logout</button>
+            </form>
+            {% else %}
+            <a href="{{ url_for('auth.login') }}">Login</a>
+            <a href="{{ url_for('auth.register') }}">Signup</a>
+            <a class="top-cta" href="{{ url_for('auth.register') }}">Get Started</a>
+            {% endif %}
+            <button type="button" class="theme-logo-toggle" data-theme-quick-toggle aria-label="Toggle theme" title="Toggle theme">☾</button>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-list">
+                    {% for category, message in messages %}
+                    <li class="flash flash-{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/theme.js') }}" defer></script>
+</body>
+</html>

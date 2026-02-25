@@ -1,0 +1,57 @@
+﻿{% extends "base.html" %}
+{% block title %}Login | Secure Login RBAC{% endblock %}
+{% block body_class %}login-page{% endblock %}
+{% block content %}
+<section class="card login-card">
+    <h2>Welcome Back</h2>
+    <p class="hint login-subtitle">Sign in to access your secure workspace.</p>
+    <form id="login-form" method="post" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" value="{{ form_data.email }}" required>
+
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" required>
+        <label class="show-password-toggle" for="show-password">
+            <input id="show-password" type="checkbox">
+            <span>Show password</span>
+        </label>
+
+        {% if use_turnstile %}
+        <div class="turnstile-wrap">
+            <div class="cf-turnstile" data-sitekey="{{ turnstile_site_key }}" data-appearance="always"></div>
+        </div>
+        <p class="hint">Complete the CAPTCHA verification to continue.</p>
+        {% else %}
+        <div class="local-captcha-wrap">
+            <input type="hidden" name="local_captcha_token" value="{{ local_captcha_token }}">
+            <label class="local-captcha-check" for="local-captcha-confirm">
+                <input id="local-captcha-confirm" type="checkbox" name="local_captcha_confirm" value="yes" required>
+                <span>I am not a robot</span>
+            </label>
+            <p class="hint">Click the checkbox to verify you are human.</p>
+        </div>
+        {% endif %}
+
+        <button type="submit">Sign in</button>
+    </form>
+
+    <p class="hint login-footer">No account? <a href="{{ url_for('auth.register') }}">Register</a></p>
+    <p class="hint auth-helper"><a class="mini-link" href="{{ url_for('auth.forgot_password') }}">Forgot Password?</a></p>
+    <span class="developer-credit">Developed by Raja Ansari</span>
+</section>
+<script>
+    (function () {
+        var passwordInput = document.getElementById("password");
+        var showPasswordToggle = document.getElementById("show-password");
+        if (!passwordInput || !showPasswordToggle) {
+            return;
+        }
+
+        showPasswordToggle.addEventListener("change", function () {
+            passwordInput.type = showPasswordToggle.checked ? "text" : "password";
+        });
+    })();
+</script>
+{% endblock %}
